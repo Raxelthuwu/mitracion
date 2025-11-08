@@ -1,8 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
 import routes from "./routes/index";
-import "./config/database";
-import db from "./config/database";
 
 dotenv.config();
 
