@@ -1,15 +1,14 @@
 import { Router } from "express";
-import { Controllers } from "../controllers/controllers"
+import { Controllers } from "../controllers/controllers";
 
 const router = Router();
 
-router.get("/", (req, res) => {
-  res.json({ message: "Bienvenido a la API " });
-});
+// Verificar usuario (login funcionario)
+router.post("/usuario/login", Controllers.verificarUsuarioController);
 
 
-
-
+//Insertar datos del migrante
+router.post("/migrante", Controllers.insertarMigranteController);
 
 
 export default router;

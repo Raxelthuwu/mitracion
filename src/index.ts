@@ -14,12 +14,6 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/api", routes);
 
-
-app.get("/", (req, res) => {
-  res.send("🚀 Servidor funcionando correctamente con TypeScript + Express");
-});
-
-
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
