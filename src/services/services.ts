@@ -12,9 +12,7 @@ import {
 } from "../utils/utils";
 
 export const services = {
-
-    //Verifica si existe un usuario con el correo y contraseña dados.
-    async verificarUsuarioService(email: string, password: string) {
+  async verificarUsuarioService(email: string, password: string) {
     try {
       const user = await Models.verificarUsuario(email, password);
 
@@ -37,8 +35,7 @@ export const services = {
       };
     }
   },
-  
-  // Inserta un nuevo migrante en la base de datos.
+
   async insertarMigranteService(data: IMigrante) {
     try {
       const result = await Models.insertarMigrante(data);
@@ -56,6 +53,65 @@ export const services = {
     }
   },
 
+  async obtenerMigrantePorDocumentoService(documento: string) {
+    try {
+      const migrante = await Models.obtenerMigrantePorDocumento(documento);
+      if (migrante) {
+        return {
+          status: 200,
+          data: {
+            fullname: migrante.nombre_completo,
+            document: migrante.documento,
+            age: migrante.edad,
+            gender: migrante.genero,
+            nacionality: migrante.nacionalidad,
+            originCountry: migrante.pais_origen,
+            dateArrival: migrante.fecha_llegada,
+            email: migrante.correo,
+            phoneNumber: migrante.numero_telefonico,
+            motive: migrante.motivo_migracion
+          }
+        };
+      } else {
+        return {
+          status: 404,
+          message: 'Migrante no encontrado',
+          data: {}
+        };
+      }
+    } catch (error) {
+      return {
+        status: 500,
+        message: 'Error interno',
+        data: {}
+      };
+    }
+  },
 
-
+  async insertarMigranteServicioService(document: string, service: number, solicitudDate: string) {
+    try {
+      const result = await Models.insertarMigranteServicio(document, service, solicitudDate);
+      if (result === 'success') {
+        return {
+          status: 201,
+          message: 'Solicitud registrada'
+        };
+      }
+      if (result === 'not_found') {
+        return {
+          status: 404,
+          message: 'Migrante no encontrado'
+        };
+      }
+      return {
+        status: 500,
+        message: 'Error interno'
+      };
+    } catch (error) {
+      return {
+        status: 500,
+        message: 'Error interno'
+      };
+    }
+  }
 };

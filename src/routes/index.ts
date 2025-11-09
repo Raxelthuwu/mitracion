@@ -11,4 +11,10 @@ router.post("/usuario/login", Controllers.verificarUsuarioController);
 router.post("/migrante", Controllers.insertarMigranteController);
 
 
+router.get('/migrante/documento', Controllers.obtenerMigrantePorDocumentoController);
+
+
+router.post('/migrante/servicio', Controllers.insertarMigranteServicioController);
+
+
 export default router;
