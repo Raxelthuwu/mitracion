@@ -56,6 +56,89 @@ export const services = {
     }
   },
 
+  //Actualiza los datos de un migrante existente
+  async actualizarMigranteService(documento: number, data: Partial<IMigrante>) {
+    try {
+      const result = await Models.actualizarMigrante(documento, data);
+      return {
+        status: 200,
+        message: result.message,
+      };
+    } catch (error: any) {
+      if (error.message === "not found") {
+        return {
+          status: 404,
+          message: "data not found",
+        };
+      } else {
+        return {
+          status: 500,
+          message: "internal server error",
+        };
+      }
+    }
+  },
+
+  //Elimina un migrante de la base de datos
+  async eliminarMigranteService(documento: number) {
+    try {
+      const result = await Models.eliminarMigrante(documento);
+      return {
+        status: 200,
+        message: result.message,
+      };
+    } catch (error: any) {
+      if (error.message === "not found") {
+        return {
+          status: 404,
+          message: "data not found",
+        };
+      } else {
+        return {
+          status: 500,
+          message: "internal server error",
+        };
+      }
+    }
+  },
+
+  //Obtener familiares de un migrante por documento
+  async obtenerFamiliaresPorDocumentoService(documento: number) {
+    try {
+      const data = await Models.obtenerFamiliaresPorDocumento(documento);
+      if (!data || data.length === 0) {
+        return { status: 404, message: "no family found" };
+      }
+      return { status: 200, message: "success", data };
+    } catch (error) {
+      console.error("Error en obtenerFamiliaresPorDocumentoService:", error);
+      return { status: 500, message: "internal server error" };
+    }
+  },
+
+  async obtenerAtencionesMigranteService(documento: number) {
+      try {
+        const data = await Models.obtenerAtencionesPorDocumento(documento);
+        if (!data || data.length === 0) {
+          return { status: 404, message: "No se encontraron registros para este migrante" };
+        }
+        return { status: 200, data };
+      } catch (error) {
+        console.error("Error en el service obtenerAtencionesMigranteService:", error);
+        return { status: 500, message: "Internal server error" };
+      }
+    },
+
+
+
+
+
+
+
+
+
+
+
 
 
 };

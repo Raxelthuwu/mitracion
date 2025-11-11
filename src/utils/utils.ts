@@ -1,12 +1,12 @@
 export interface IMigrante {
   nombre_completo: string;
-  documento: string;
+  documento: number;
   edad: number;
   genero: string;
   nacionalidad: string;
   pais_origen: string;
   fecha_llegada: Date;
-  correo: string;
+  correo: number;
   numero_telefonico: string;
   motivo_migracion: string;
 }
