@@ -113,5 +113,53 @@ export const services = {
         message: 'Error interno'
       };
     }
+  },
+
+  async listarMigranteServicioService() {
+    try {
+      const lista = await Models.listarMigranteServicio();
+      return { status: 200, data: lista };
+    } catch (error) {
+      return { status: 500, message: 'Error interno' };
+    }
+  },
+
+  async obtenerMigranteServicioPorIdService(id: number) {
+    try {
+      const found = await Models.obtenerMigranteServicioPorId(id);
+      if (found) return { status: 200, data: found };
+      return { status: 404, message: 'No encontrado' };
+    } catch (error) {
+      return { status: 500, message: 'Error interno' };
+    }
+  },
+
+  async crearMigranteServicioService(data: IMigranteServicio) {
+    try {
+      await Models.crearMigranteServicio(data);
+      return { status: 201, message: 'Creado' };
+    } catch (error) {
+      return { status: 500, message: 'Error interno' };
+    }
+  },
+
+  async actualizarMigranteServicioService(id: number, data: Partial<IMigranteServicio>) {
+    try {
+      const result = await Models.actualizarMigranteServicio(id, data);
+      if (result) return { status: 200, message: 'Actualizado' };
+      return { status: 404, message: 'No encontrado' };
+    } catch (error) {
+      return { status: 500, message: 'Error interno' };
+    }
+  },
+
+  async eliminarMigranteServicioService(id: number) {
+    try {
+      const result = await Models.eliminarMigranteServicio(id);
+      if (result) return { status: 200, message: 'Eliminado' };
+      return { status: 404, message: 'No encontrado' };
+    } catch (error) {
+      return { status: 500, message: 'Error interno' };
+    }
   }
 };

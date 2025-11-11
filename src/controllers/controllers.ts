@@ -98,6 +98,37 @@ export const Controllers = {
         message: 'Error interno'
       });
     }
+  },
+
+  async listarMigranteServicioController(req: Request, res: Response) {
+    const result = await services.listarMigranteServicioService();
+    res.status(result.status).json(result);
+  },
+
+  async obtenerMigranteServicioPorIdController(req: Request, res: Response) {
+    const { id } = req.params;
+    const result = await services.obtenerMigranteServicioPorIdService(Number(id));
+    res.status(result.status).json(result);
+  },
+
+  async crearMigranteServicioController(req: Request, res: Response) {
+    const data = req.body;
+    const result = await services.crearMigranteServicioService(data);
+    res.status(result.status).json(result);
+  },
+
+  async actualizarMigranteServicioController(req: Request, res: Response) {
+    const { id } = req.params;
+    const data = req.body;
+    const result = await services.actualizarMigranteServicioService(Number(id), data);
+    res.status(result.status).json(result);
+  },
+
+  async eliminarMigranteServicioController(req: Request, res: Response) {
+    const { id } = req.params;
+    const result = await services.eliminarMigranteServicioService(Number(id));
+    res.status(result.status).json(result);
   }
 };
+
 

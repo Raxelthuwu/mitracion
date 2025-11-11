@@ -73,5 +73,31 @@ export const Models = {
     } catch (error) {
       throw new Error('Error al insertar migrante_servicio');
     }
+  },
+
+  async listarMigranteServicio(): Promise<any[]> {
+    return await db<IMigranteServicio>('migracion.migrante_servicio');
+  },
+
+  async obtenerMigranteServicioPorId(id: number): Promise<IMigranteServicio | null> {
+    return await db<IMigranteServicio>('migracion.migrante_servicio')
+      .where('id_migrante_servicio', id)
+      .first();
+  },
+
+  async crearMigranteServicio(data: IMigranteServicio): Promise<void> {
+    await db<IMigranteServicio>('migracion.migrante_servicio').insert(data);
+  },
+
+  async actualizarMigranteServicio(id: number, data: Partial<IMigranteServicio>): Promise<number> {
+    return await db<IMigranteServicio>('migracion.migrante_servicio')
+      .where('id_migrante_servicio', id)
+      .update(data);
+  },
+
+  async eliminarMigranteServicio(id: number): Promise<number> {
+    return await db<IMigranteServicio>('migracion.migrante_servicio')
+      .where('id_migrante_servicio', id)
+      .del();
   }
 };
