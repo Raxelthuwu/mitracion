@@ -58,32 +58,34 @@ export const Models = {
     }
   },
 
-  async insertarMigranteServicio(documento: string, id_servicio: number, fecha_solicitud: string): Promise<string> {
-    try {
-      const migrante = await db<IMigrante>('migracion.migrante')
-        .where('documento', documento)
-        .first();
-      if (!migrante) return 'not_found';
-      await db('migracion.migrante_servicio').insert({
-        id_migrante: migrante.id_migrante,
-        id_servicio: id_servicio,
-        fecha_solicitud: fecha_solicitud
-      });
-      return 'success';
-    } catch (error) {
-      throw new Error('Error al insertar migrante_servicio');
-    }
-  },
+  async insertarMigranteServicio(documento: string, id_servicio: number, solicitudDate: Date) {
+    const migrante = await db<IMigrante>('migracion.migrante')
+    .where({ documento })
+    .select('id_migrante')
+    .first();
+  if (!migrante || !migrante.id_migrante) return 'not_found';
+  await db('migracion.migrante_servicio').insert({
+    id_migrante: migrante.id_migrante,
+    id_servicio,
+    solicitudDate
+  });
+
+  return 'success';
+}
+,
+
 
   async listarMigranteServicio(): Promise<any[]> {
     return await db<IMigranteServicio>('migracion.migrante_servicio');
   },
 
   async obtenerMigranteServicioPorId(id: number): Promise<IMigranteServicio | null> {
-    return await db<IMigranteServicio>('migracion.migrante_servicio')
-      .where('id_migrante_servicio', id)
-      .first();
+  const result = await db<IMigranteServicio>('migracion.migrante_servicio')
+    .where('id_migrante_servicio', id)
+    .first();
+  return result ?? null;
   },
+
 
   async crearMigranteServicio(data: IMigranteServicio): Promise<void> {
     await db<IMigranteServicio>('migracion.migrante_servicio').insert(data);

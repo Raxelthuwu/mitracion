@@ -88,7 +88,7 @@ export const services = {
     }
   },
 
-  async insertarMigranteServicioService(document: string, service: number, solicitudDate: string) {
+  async insertarMigranteServicioService(document: string, service: number, solicitudDate: Date) {
     try {
       const result = await Models.insertarMigranteServicio(document, service, solicitudDate);
       if (result === 'success') {
