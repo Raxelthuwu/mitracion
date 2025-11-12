@@ -13,6 +13,7 @@ import {
 } from "../utils/utils";
 
 export const Models = {
+  // Verifica si existe un usuario con el correo y contraseña dados.
   async verificarUsuario(email: string, password: string): Promise<IUsuario | null> {
     try {
       const user = await db<IUsuario>("mitracion.usuario")
@@ -25,6 +26,7 @@ export const Models = {
     }
   },
 
+  // Inserta un nuevo migrante en la base de datos.
   async insertarMigrante(data: IMigrante): Promise<{ message: string }> {
     try {
       await db<IMigrante>("mitracion.migrante").insert({
@@ -39,7 +41,6 @@ export const Models = {
         numero_telefonico: data.numero_telefonico,
         motivo_migracion: data.motivo_migracion,
       });
-
       return { message: "success" };
     } catch (error) {
       console.error("Error al insertar migrante:", error);
@@ -47,49 +48,19 @@ export const Models = {
     }
   },
 
-  async obtenerMigrantePorDocumento(documento: number): Promise<IMigrante | null> {
+  // Obtener migrante por documento
+  async obtenerMigrantePorDocumento(documento: string): Promise<any> {
     try {
       const migrante = await db<IMigrante>('mitracion.migrante')
         .where('documento', documento)
         .first();
-      return migrante || null;
+      return migrante ? migrante : null;
     } catch (error) {
       throw new Error('Error al consultar el migrante');
     }
   },
 
-  async insertarMigranteServicio(documento: number, id_servicio: number, solicitudDate: Date) {
-    const migrante = await db<IMigrante>('mitracion.migrante')
-      .where({ documento })
-      .select('id_migrante')
-      .first();
-    if (!migrante || !migrante.id_migrante) return 'not_found';
-    await db('mitracion.migrante_servicio').insert({
-      id_migrante: migrante.id_migrante,
-      id_servicio,
-      fecha_solicitud: solicitudDate
-    });
-    return 'success';
-  },
-
-  async listarMigranteServicio(): Promise<IMigranteServicio[]> {
-    try {
-      const data = await db<IMigranteServicio>('mitracion.migrante_servicio');
-      console.log("Resultado listarMigranteServicio:", data);
-      return data;
-    } catch (error) {
-      console.error("Error en listarMigranteServicio:", error);
-      throw error;
-    }
-  },
-
-  async obtenerMigranteServicioPorId(id: number): Promise<IMigranteServicio | null> {
-    const result = await db<IMigranteServicio>('mitracion.migrante_servicio')
-      .where('id_migrante_servicio', id)
-      .first();
-    return result || null;
-  },
-
+  // Actualiza los datos de un migrante existente
   async actualizarMigrante(documento: number, data: Partial<IMigrante>): Promise<{ message: string }> {
     try {
       const result = await db<IMigrante>("mitracion.migrante")
@@ -102,13 +73,13 @@ export const Models = {
     }
   },
 
+  // Elimina un migrante de la base de datos
   async eliminarMigrante(documento: number): Promise<{ message: string }> {
     try {
       const result = await db<IMigrante>("mitracion.migrante")
         .where({ documento })
         .del();
       if (result === 0) throw new Error("not found");
-
       return { message: "deleted successfully" };
     } catch (error) {
       console.error("Error al eliminar migrante:", error);
@@ -116,6 +87,7 @@ export const Models = {
     }
   },
 
+  // Obtener los familiares de un migrante por documento
   async obtenerFamiliaresPorDocumento(documento: number) {
     try {
       const familiares = await db("mitracion.migrante")
@@ -140,6 +112,7 @@ export const Models = {
     }
   },
 
+  // Obtener atenciones por documento de migrante
   async obtenerAtencionesPorDocumento(documento: number) {
     try {
       const resultados = await db("mitracion.registro_atencion")
@@ -189,24 +162,80 @@ export const Models = {
     }
   },
 
-  async crearMigranteServicio(data: IMigranteServicio): Promise<void> {
-    try {
-      await db<IMigranteServicio>('mitracion.migrante_servicio').insert(data);
-    } catch (error) {
-      console.error("Error al crear migrante_servicio:", error);
-      throw new Error("internal server error");
-    }
-  },
-
-  async actualizarMigranteServicio(id: number, data: Partial<IMigranteServicio>): Promise<number> {
-    return await db<IMigranteServicio>('mitracion.migrante_servicio')
-      .where('id_migrante_servicio', id)
-      .update(data);
-  },
-
-  async eliminarMigranteServicio(id: number): Promise<number> {
-    return await db<IMigranteServicio>('mitracion.migrante_servicio')
-      .where('id_migrante_servicio', id)
-      .del();
+  
+  async listarMigranteServicio(): Promise<any[]> {
+  try {
+    const data = await db("mitracion.migrante_servicio")
+      .join("mitracion.migrante", "mitracion.migrante_servicio.id_migrante", "mitracion.migrante.id_migrante")
+      .join("mitracion.servicio", "mitracion.migrante_servicio.id_servicio", "mitracion.servicio.id_servicio")
+      .select(
+        "mitracion.migrante_servicio.id_migrante_servicio",
+        "mitracion.migrante.nombre_completo as migrante_nombre",
+        "mitracion.migrante.documento as migrante_documento",
+        "mitracion.servicio.tipo_servicio",
+        "mitracion.migrante_servicio.fecha_solicitud"
+      );
+    return data;
+  } catch (error) {
+    console.error("Error en listarMigranteServicio:", error);
+    throw error;
   }
+},
+
+  async obtenerMigranteServicioPorDocumento(documento: string): Promise<any[]> {
+  try {
+    const data = await db("mitracion.migrante_servicio")
+      .join("mitracion.migrante", "mitracion.migrante_servicio.id_migrante", "mitracion.migrante.id_migrante")
+      .join("mitracion.servicio", "mitracion.migrante_servicio.id_servicio", "mitracion.servicio.id_servicio")
+      .select(
+        "mitracion.migrante_servicio.id_migrante_servicio",
+        "mitracion.migrante.nombre_completo as migrante_nombre",
+        "mitracion.migrante.documento as migrante_documento",
+        "mitracion.servicio.tipo_servicio",
+        "mitracion.migrante_servicio.fecha_solicitud"
+      )
+      .where("mitracion.migrante.documento", documento);
+
+    return data;
+  } catch (error) {
+    console.error("Error en obtenerMigranteServicioPorDocumento:", error);
+    throw error;
+  }
+},
+
+
+  async crearMigranteServicio(data: IMigranteServicio): Promise<void> {
+    await db<IMigranteServicio>('mitracion.migrante_servicio').insert(data);
+  },
+
+  async actualizarMigranteServicioPorDocumento(documento: string, data: Partial<IMigranteServicio>): Promise<number> {
+  const migrante = await db("mitracion.migrante").where("documento", documento).first();
+  if (!migrante || !migrante.id_migrante) return 0;
+
+  return await db("mitracion.migrante_servicio")
+    .where("id_migrante", migrante.id_migrante)
+    .update(data);
+},
+
+async eliminarMigranteServicioPorDocumento(documento: string): Promise<number> {
+  console.log("Intentando eliminar migrante_servicio para documento:", documento);
+
+  const migrante = await db("mitracion.migrante").where({ documento }).first();
+  console.log("Resultado búsqueda migrante:", migrante);
+
+  if (!migrante || !migrante.id_migrante) {
+    console.log("No se encontró migrante con ese documento");
+    return 0;
+  }
+
+  const result = await db("mitracion.migrante_servicio")
+    .where("id_migrante", migrante.id_migrante)
+    .del();
+
+  console.log("Resultado eliminación migrante_servicio:", result);
+  return result;
+}
+
+
+
 };
