@@ -10,6 +10,7 @@ export const Controllers = {
         return res.status(400).json({
           status: 400,
           message: "email and password are required",
+          data: null
         });
       }
 
@@ -20,6 +21,7 @@ export const Controllers = {
       return res.status(500).json({
         status: 500,
         message: "internal server error",
+        data: null
       });
     }
   },
@@ -46,6 +48,7 @@ export const Controllers = {
         return res.status(400).json({
           status: 400,
           message: `missing fields: ${missing.join(", ")}`,
+          data: null
         });
       }
 
@@ -56,27 +59,29 @@ export const Controllers = {
       return res.status(500).json({
         status: 500,
         message: "internal server error",
+        data: null
       });
     }
   },
 
   async obtenerMigrantePorDocumentoController(req: Request, res: Response) {
     try {
-      const { document } = req.body;
-      if (!document) {
+      const documento = Number(req.params.documento);
+      if (!documento) {
         return res.status(400).json({
           status: 400,
           message: 'Falta el documento',
-          data: {}
+          data: null
         });
       }
-      const result = await services.obtenerMigrantePorDocumentoService(document);
+      const result = await services.obtenerMigrantePorDocumentoService(documento);
       res.status(result.status).json(result);
     } catch (error) {
+      console.error("Error en obtenerMigrantePorDocumentoController:", error);
       res.status(500).json({
         status: 500,
         message: 'Error interno',
-        data: {}
+        data: null
       });
     }
   },
@@ -84,34 +89,43 @@ export const Controllers = {
   async insertarMigranteServicioController(req: Request, res: Response) {
     try {
       const { document, service, solicitudDate } = req.body;
-      if (!document || !service || !solicitudDate) {
+      const documento = Number(document);
+      const id_servicio = Number(service);
+      const fecha_solicitud = new Date(solicitudDate);
+
+      if (!documento || !id_servicio || !fecha_solicitud) {
         return res.status(400).json({
           status: 400,
-          message: 'Faltan datos requeridos'
+          message: 'Faltan datos requeridos',
+          data: null
         });
       }
-      const result = await services.insertarMigranteServicioService(document, service, solicitudDate);
+
+      const result = await services.insertarMigranteServicioService(documento, id_servicio, fecha_solicitud);
       res.status(result.status).json(result);
     } catch (error) {
+      console.error("Error en insertarMigranteServicioController:", error);
       res.status(500).json({
         status: 500,
-        message: 'Error interno'
+        message: 'Error interno',
+        data: null
       });
     }
   },
 
   async listarMigranteServicioController(req: Request, res: Response) {
-  console.log("Endpoint migrante_servicio recibido");
-  const result = await services.listarMigranteServicioService();
-  console.log("Resultado migrante_servicio:", result);
-  res.status(result.status).json(result);
-},
-
-  
+    console.log("Endpoint migrante_servicio recibido");
+    const result = await services.listarMigranteServicioService();
+    console.log("Resultado migrante_servicio:", result);
+    res.status(result.status).json(result);
+  },
 
   async obtenerMigranteServicioPorIdController(req: Request, res: Response) {
-    const { id } = req.params;
-    const result = await services.obtenerMigranteServicioPorIdService(Number(id));
+    const id = Number(req.params.id);
+    if (isNaN(id)) {
+      return res.status(400).json({ status: 400, message: 'ID inválido', data: null });
+    }
+    const result = await services.obtenerMigranteServicioPorIdService(id);
     res.status(result.status).json(result);
   },
 
@@ -122,17 +136,58 @@ export const Controllers = {
   },
 
   async actualizarMigranteServicioController(req: Request, res: Response) {
-    const { id } = req.params;
+    const id = Number(req.params.id);
+    if (isNaN(id)) {
+      return res.status(400).json({ status: 400, message: 'ID inválido', data: null });
+    }
     const data = req.body;
-    const result = await services.actualizarMigranteServicioService(Number(id), data);
+    const result = await services.actualizarMigranteServicioService(id, data);
     res.status(result.status).json(result);
   },
 
   async eliminarMigranteServicioController(req: Request, res: Response) {
-    const { id } = req.params;
-    const result = await services.eliminarMigranteServicioService(Number(id));
+    const id = Number(req.params.id);
+    if (isNaN(id)) {
+      return res.status(400).json({ status: 400, message: 'ID inválido', data: null });
+    }
+    const result = await services.eliminarMigranteServicioService(id);
+    res.status(result.status).json(result);
+  },
+
+  async actualizarMigranteController(req: Request, res: Response) {
+    const documento = Number(req.params.documento);
+    if (!documento) {
+      return res.status(400).json({ status: 400, message: "Falta el documento", data: null });
+    }
+    const data = req.body;
+    const result = await services.actualizarMigranteService(documento, data);
+    res.status(result.status).json(result);
+  },
+
+  async eliminarMigranteController(req: Request, res: Response) {
+    const documento = Number(req.params.documento);
+    if (!documento) {
+      return res.status(400).json({ status: 400, message: "Falta el documento", data: null });
+    }
+    const result = await services.eliminarMigranteService(documento);
+    res.status(result.status).json(result);
+  },
+
+  async obtenerFamiliaresPorDocumentoController(req: Request, res: Response) {
+    const documento = Number(req.params.documento);
+    if (!documento) {
+      return res.status(400).json({ status: 400, message: "Falta el documento", data: null });
+    }
+    const result = await services.obtenerFamiliaresPorDocumentoService(documento);
+    res.status(result.status).json(result);
+  },
+
+  async obtenerAtencionesMigranteController(req: Request, res: Response) {
+    const documento = Number(req.params.documento);
+    if (!documento) {
+      return res.status(400).json({ status: 400, message: "Falta el documento", data: null });
+    }
+    const result = await services.obtenerAtencionesMigranteService(documento);
     res.status(result.status).json(result);
   }
 };
-
-
