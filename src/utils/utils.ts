@@ -1,6 +1,6 @@
 export interface IMigrante {
   nombre_completo: string;
-  documento: string;
+  documento: number;
   edad: number;
   genero: string;
   nacionalidad: string;

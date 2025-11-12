@@ -15,7 +15,6 @@ export const services = {
   async verificarUsuarioService(email: string, password: string) {
     try {
       const user = await Models.verificarUsuario(email, password);
-
       if (user) {
         return {
           status: 200,
@@ -39,7 +38,6 @@ export const services = {
   async insertarMigranteService(data: IMigrante) {
     try {
       const result = await Models.insertarMigrante(data);
-
       return {
         status: 201,
         message: result.message,
@@ -69,14 +67,14 @@ export const services = {
             dateArrival: migrante.fecha_llegada,
             email: migrante.correo,
             phoneNumber: migrante.numero_telefonico,
-            motive: migrante.motivo_migracion
+            motive: migrante.motivo_migracion,
           }
         };
       } else {
         return {
           status: 404,
           message: 'Migrante no encontrado',
-          data: {}
+          data: {},
         };
       }
     } catch (error) {
@@ -88,30 +86,76 @@ export const services = {
     }
   },
 
-  async insertarMigranteServicioService(document: string, service: number, solicitudDate: Date) {
+  // Actualiza los datos de un migrante existente
+  async actualizarMigranteService(documento: number, data: Partial<IMigrante>) {
     try {
-      const result = await Models.insertarMigranteServicio(document, service, solicitudDate);
-      if (result === 'success') {
-        return {
-          status: 201,
-          message: 'Solicitud registrada'
-        };
-      }
-      if (result === 'not_found') {
+      const result = await Models.actualizarMigrante(documento, data);
+      return {
+        status: 200,
+        message: result.message,
+      };
+    } catch (error: any) {
+      if (error.message === "not found") {
         return {
           status: 404,
-          message: 'Migrante no encontrado'
+          message: "data not found",
+        };
+      } else {
+        return {
+          status: 500,
+          message: "internal server error",
         };
       }
+    }
+  },
+
+  // Elimina un migrante de la base de datos
+  async eliminarMigranteService(documento: number) {
+    try {
+      const result = await Models.eliminarMigrante(documento);
       return {
-        status: 500,
-        message: 'Error interno'
+        status: 200,
+        message: result.message,
       };
+    } catch (error: any) {
+      if (error.message === "not found") {
+        return {
+          status: 404,
+          message: "data not found",
+        };
+      } else {
+        return {
+          status: 500,
+          message: "internal server error",
+        };
+      }
+    }
+  },
+
+  // Obtener familiares de un migrante por documento
+  async obtenerFamiliaresPorDocumentoService(documento: number) {
+    try {
+      const data = await Models.obtenerFamiliaresPorDocumento(documento);
+      if (!data || data.length === 0) {
+        return { status: 404, message: "no family found" };
+      }
+      return { status: 200, message: "success", data };
     } catch (error) {
-      return {
-        status: 500,
-        message: 'Error interno'
-      };
+      console.error("Error en obtenerFamiliaresPorDocumentoService:", error);
+      return { status: 500, message: "internal server error" };
+    }
+  },
+
+  async obtenerAtencionesMigranteService(documento: number) {
+    try {
+      const data = await Models.obtenerAtencionesPorDocumento(documento);
+      if (!data || data.length === 0) {
+        return { status: 404, message: "No se encontraron registros para este migrante" };
+      }
+      return { status: 200, data };
+    } catch (error) {
+      console.error("Error en el service obtenerAtencionesMigranteService:", error);
+      return { status: 500, message: "Internal server error" };
     }
   },
 
@@ -124,10 +168,11 @@ export const services = {
     }
   },
 
-  async obtenerMigranteServicioPorIdService(id: number) {
+  // Obtención por documento: recibe { documento } y retorna info join
+  async obtenerMigranteServicioPorDocumentoService(documento: string) {
     try {
-      const found = await Models.obtenerMigranteServicioPorId(id);
-      if (found) return { status: 200, data: found };
+      const found = await Models.obtenerMigranteServicioPorDocumento(documento);
+      if (found && found.length > 0) return { status: 200, data: found };
       return { status: 404, message: 'No encontrado' };
     } catch (error) {
       return { status: 500, message: 'Error interno' };
@@ -143,9 +188,10 @@ export const services = {
     }
   },
 
-  async actualizarMigranteServicioService(id: number, data: Partial<IMigranteServicio>) {
+  // Actualizar por documento
+  async actualizarMigranteServicioPorDocumentoService(documento: string, data: Partial<IMigranteServicio>) {
     try {
-      const result = await Models.actualizarMigranteServicio(id, data);
+      const result = await Models.actualizarMigranteServicioPorDocumento(documento, data);
       if (result) return { status: 200, message: 'Actualizado' };
       return { status: 404, message: 'No encontrado' };
     } catch (error) {
@@ -153,9 +199,10 @@ export const services = {
     }
   },
 
-  async eliminarMigranteServicioService(id: number) {
+  // Eliminar por documento
+  async eliminarMigranteServicioPorDocumentoService(documento: string) {
     try {
-      const result = await Models.eliminarMigranteServicio(id);
+      const result = await Models.eliminarMigranteServicioPorDocumento(documento);
       if (result) return { status: 200, message: 'Eliminado' };
       return { status: 404, message: 'No encontrado' };
     } catch (error) {
