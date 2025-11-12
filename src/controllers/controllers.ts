@@ -101,9 +101,13 @@ export const Controllers = {
   },
 
   async listarMigranteServicioController(req: Request, res: Response) {
-    const result = await services.listarMigranteServicioService();
-    res.status(result.status).json(result);
-  },
+  console.log("Endpoint migrante_servicio recibido");
+  const result = await services.listarMigranteServicioService();
+  console.log("Resultado migrante_servicio:", result);
+  res.status(result.status).json(result);
+},
+
+  
 
   async obtenerMigranteServicioPorIdController(req: Request, res: Response) {
     const { id } = req.params;
