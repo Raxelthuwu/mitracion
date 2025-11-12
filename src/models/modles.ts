@@ -67,17 +67,24 @@ export const Models = {
   await db('migracion.migrante_servicio').insert({
     id_migrante: migrante.id_migrante,
     id_servicio,
-    solicitudDate
-  });
-
+    fecha_solicitud: solicitudDate
+});
   return 'success';
 }
 ,
 
 
   async listarMigranteServicio(): Promise<any[]> {
-    return await db<IMigranteServicio>('migracion.migrante_servicio');
-  },
+  try {
+    const data = await db<IMigranteServicio>('migracion.migrante_servicio');
+    console.log("Resultado listarMigranteServicio:", data);
+    return data;
+  } catch (error) {
+    console.error("Error en listarMigranteServicio:", error);
+    throw error;
+  }
+},
+
 
   async obtenerMigranteServicioPorId(id: number): Promise<IMigranteServicio | null> {
   const result = await db<IMigranteServicio>('migracion.migrante_servicio')

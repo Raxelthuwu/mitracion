@@ -35,7 +35,7 @@ const db = knex(config[environment]);
 (async () => {
   try {
     await db.raw("select 1+1 as result");
-    console.log("Conectado correctamente a PostgreSQL (Clever Cloud)");
+    console.log("Conectado correctamente a PostgreSQL.");
   } catch (error) {
     console.error("Error al conectar a la base de datos:", error);
   }
