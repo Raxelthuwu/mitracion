@@ -41,6 +41,18 @@ router.put('/migrante_servicio/documento', Controllers.actualizarMigranteServici
 // Eliminar migrante_servicio por documento (usa DELETE y query param)
 router.delete('/migrante_servicio/documento', Controllers.eliminarMigranteServicioPorDocumentoController);
 
+//Andres Valencia
+
+// 🔹 Nuevas rutas:
+router.post("/migrante/familiar", Controllers.insertarMigranteFamiliarController);
+router.post("/migrante/servicio", Controllers.insertarMigranteServicioController);
+
+// === CRUD REGISTRO_ATENCION ===
+router.post("/registro-atencion", Controllers.crearRegistroAtencionController);
+router.get("/registro-atencion", Controllers.obtenerRegistrosAtencionController);
+router.get("/registro-atencion/:id", Controllers.obtenerRegistroAtencionPorIdController);
+router.put("/registro-atencion/:id", Controllers.actualizarRegistroAtencionController);
+router.delete("/registro-atencion/:id", Controllers.eliminarRegistroAtencionController);
 
 export default router;
 
