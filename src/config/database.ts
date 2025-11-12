@@ -9,11 +9,11 @@ const config: Record<string, Knex.Config> = {
   development: {
     client: "pg",
     connection: {
-      host: process.env.POSTGRESQL_ADDON_HOST,
-      user: process.env.POSTGRESQL_ADDON_USER,
-      password: process.env.POSTGRESQL_ADDON_PASSWORD,
-      database: process.env.POSTGRESQL_ADDON_DB,
-      port: Number(process.env.POSTGRESQL_ADDON_PORT),
+      host: process.env.DB_HOST,
+      user: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
+      port: Number(process.env.DB_PORT),
       ssl: { rejectUnauthorized: false },
     },
     pool: { min: 2, max: 10 },
