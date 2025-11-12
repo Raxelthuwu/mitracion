@@ -6,7 +6,7 @@ export interface IMigrante {
     nacionalidad: string;
     pais_origen: string;
     fecha_llegada: Date;
-    correo: number;
+    correo: string;
     numero_telefonico: string;
     motivo_migracion: string;
 }
