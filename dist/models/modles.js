@@ -70,5 +70,38 @@ exports.Models = {
             throw new Error("internal server error");
         }
     },
+    //Obtener los familiares de un migrante por documento
+    async obtenerFamiliaresPorDocumento(documento) {
+        try {
+            const familiares = await (0, database_1.default)("mitracion.migrante")
+                .join("mitracion.migrante_familiar", "mitracion.migrante.id_migrante", "mitracion.migrante_familiar.id_migrante")
+                .join("mitracion.migrante as familiar", "mitracion.migrante_familiar.id_familiar", "familiar.id_migrante")
+                .join("mitracion.relacion", "mitracion.migrante_familiar.id_relacion", "mitracion.relacion.id_relacion")
+                .select("familiar.nombre_completo", "familiar.documento", "familiar.edad", "familiar.genero", "familiar.nacionalidad", "familiar.pais_origen", "mitracion.relacion.tipo_relacion")
+                .where("mitracion.migrante.documento", documento);
+            return familiares;
+        }
+        catch (error) {
+            console.error("Error al obtener familiares:", error);
+            throw new Error("internal server error");
+        }
+    },
+    async obtenerAtencionesPorDocumento(documento) {
+        try {
+            const resultados = await (0, database_1.default)("mitracion.registro_atencion")
+                .rightJoin("mitracion.migrante_servicio", "mitracion.registro_atencion.id_migrante_servicio", "mitracion.migrante_servicio.id_migrante_servicio")
+                .leftJoin("mitracion.servicio", "mitracion.migrante_servicio.id_servicio", "mitracion.servicio.id_servicio")
+                .leftJoin("mitracion.migrante", "mitracion.migrante_servicio.id_migrante", "mitracion.migrante.id_migrante")
+                .leftJoin("mitracion.institucion", "mitracion.registro_atencion.id_institucion", "mitracion.institucion.id_institucion")
+                .leftJoin("mitracion.usuario", "mitracion.registro_atencion.id_funcionario", "mitracion.usuario.id_usuario")
+                .select("mitracion.migrante.id_migrante", "mitracion.migrante.nombre_completo", "mitracion.migrante.documento", "mitracion.servicio.tipo_servicio", "mitracion.migrante_servicio.fecha_solicitud", "mitracion.registro_atencion.id_registro", "mitracion.registro_atencion.fecha", "mitracion.registro_atencion.observaciones", "mitracion.institucion.nombre", "mitracion.usuario.nombre")
+                .where("mitracion.migrante.documento", documento);
+            return resultados;
+        }
+        catch (error) {
+            console.error("Error al obtener atenciones del migrante:", error);
+            throw new Error("internal server error");
+        }
+    },
 };
 //# sourceMappingURL=modles.js.map

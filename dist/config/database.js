@@ -18,7 +18,7 @@ const config = {
             port: Number(process.env.POSTGRESQL_ADDON_PORT),
             ssl: { rejectUnauthorized: false },
         },
-        pool: { min: 2, max: 10 },
+        pool: { min: 1, max: 2 },
         migrations: { tableName: "knex_migrations" },
     },
     production: {

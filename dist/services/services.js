@@ -93,5 +93,32 @@ exports.services = {
             }
         }
     },
+    //Obtener familiares de un migrante por documento
+    async obtenerFamiliaresPorDocumentoService(documento) {
+        try {
+            const data = await modles_1.Models.obtenerFamiliaresPorDocumento(documento);
+            if (!data || data.length === 0) {
+                return { status: 404, message: "no family found" };
+            }
+            return { status: 200, message: "success", data };
+        }
+        catch (error) {
+            console.error("Error en obtenerFamiliaresPorDocumentoService:", error);
+            return { status: 500, message: "internal server error" };
+        }
+    },
+    async obtenerAtencionesMigranteService(documento) {
+        try {
+            const data = await modles_1.Models.obtenerAtencionesPorDocumento(documento);
+            if (!data || data.length === 0) {
+                return { status: 404, message: "No se encontraron registros para este migrante" };
+            }
+            return { status: 200, data };
+        }
+        catch (error) {
+            console.error("Error en el service obtenerAtencionesMigranteService:", error);
+            return { status: 500, message: "Internal server error" };
+        }
+    },
 };
 //# sourceMappingURL=services.js.map

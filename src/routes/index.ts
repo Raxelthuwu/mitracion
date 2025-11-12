@@ -4,7 +4,7 @@ import { Controllers } from "../controllers/controllers";
 const router = Router();
 
 // Verificar usuario (login funcionario)
-router.get("/usuario/login", Controllers.verificarUsuarioController);
+router.post("/usuario/login", Controllers.verificarUsuarioController);
 
 // Insertar un nuevo migrante
 router.post("/migrante", Controllers.insertarMigranteController);

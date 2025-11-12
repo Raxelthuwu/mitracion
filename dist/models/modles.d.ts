@@ -10,5 +10,7 @@ export declare const Models: {
     eliminarMigrante(documento: number): Promise<{
         message: string;
     }>;
+    obtenerFamiliaresPorDocumento(documento: number): Promise<any[]>;
+    obtenerAtencionesPorDocumento(documento: number): Promise<any[]>;
 };
 //# sourceMappingURL=modles.d.ts.map
